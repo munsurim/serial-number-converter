@@ -3,4 +3,4 @@
   command = "python app.py"
 
 [build.environment]
-  FERNET_KEY = "your_fernet_key_here"
+  FERNET_KEY = "uxEwu4AwyFLp5ODc9I_YSGOCLR4hOCeyuJd0_5Pe1RA="
