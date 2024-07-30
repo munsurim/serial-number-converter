@@ -1,0 +1,6 @@
+[build]
+  publish = "static"
+  command = "python app.py"
+
+[build.environment]
+  FERNET_KEY = "your_fernet_key_here"
