@@ -1,0 +1,5 @@
+Flask
+cryptography
+python-barcode
+Pillow
+gunicorn

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>바코드 생성기</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .barcode-list {
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+            margin-top: 20px;
+        }
+        .barcode-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .barcode-item img {
+            margin-right: 10px;
+        }
+        .barcode-item button {
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>바코드 생성기</h1>
+        <form method="POST">
+            <label for="serial_number">시리얼 번호:</label>
+            <input type="text" id="serial_number" name="serial_number" required>
+            
+            <label for="customer_name">고객 이름:</label>
+            <input type="text" id="customer_name" name="customer_name" required>
+            
+            <label for="customer_number">고객 번호:</label>
+            <input type="text" id="customer_number" name="customer_number" required>
+            
+            <button type="submit">바코드 생성</button>
+        </form>
+        
+        {% if barcode_image %}
+        <div class="barcode">
+            <h2>생성된 바코드:</h2>
+            <img src="{{ url_for('static', filename='Barcodes/' + barcode_image) }}" alt="Barcode Image">
+            <a href="{{ url_for('download_file', filename=barcode_image) }}">
+                <button>바코드 다운로드</button>
+            </a>
+        </div>
+        {% endif %}
+        
+        <div class="barcode-list">
+            <h3>바코드 목록</h3>
+            <input type="text" id="search" placeholder="검색어를 입력하세요" onkeyup="filterBarcodes()">
+            <ul id="barcodeList">
+                {% for barcode in barcode_list %}
+                <li class="barcode-item">
+                    <img src="{{ url_for('static', filename='Barcodes/' + barcode) }}" alt="Barcode Image" width="100">
+                    <span>{{ barcode }}</span>
+                    <a href="{{ url_for('download_file', filename=barcode) }}">
+                        <button>다운로드</button>
+                    </a>
+                    <button onclick="deleteBarcode('{{ barcode }}')">삭제</button>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <script>
+        function deleteBarcode(filename) {
+            fetch('/delete_image', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ filename: filename })
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Error deleting barcode');
+                }
+            });
+        }
+
+        function filterBarcodes() {
+            const searchInput = document.getElementById('search').value.toLowerCase();
+            const barcodeItems = document.querySelectorAll('.barcode-item');
+            
+            barcodeItems.forEach(item => {
+                const barcodeText = item.querySelector('span').textContent.toLowerCase();
+                if (barcodeText.includes(searchInput)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
