@@ -23,10 +23,20 @@
         .barcode-item button {
             margin-left: auto;
         }
+        .error-report {
+            font-size: 0.8em;
+            color: #555;
+        }
+        .search-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <h1 class="error-report">오류 제보 : surim0506@naver.com</h1>
         <h1>바코드 생성기</h1>
         <form method="POST">
             <label for="serial_number">시리얼 번호:</label>
@@ -48,12 +58,15 @@
             <a href="{{ url_for('download_file', filename=barcode_image) }}">
                 <button>바코드 다운로드</button>
             </a>
+            <button onclick="deleteBarcode('{{ barcode_image }}')">삭제</button>
         </div>
         {% endif %}
         
         <div class="barcode-list">
-            <h3>바코드 목록</h3>
-            <input type="text" id="search" placeholder="검색어를 입력하세요" onkeyup="filterBarcodes()">
+            <div class="search-container">
+                <h3>바코드 목록</h3>
+                <input type="text" id="search" placeholder="검색어를 입력하세요" onkeyup="filterBarcodes()">
+            </div>
             <ul id="barcodeList">
                 {% for barcode in barcode_list %}
                 <li class="barcode-item">

@@ -39,7 +39,14 @@ def generate_barcode(serial_number, customer_name, customer_number):
         filename = f"{serial_number} {customer_name} {customer_number}"
         CODE128 = barcode.get_barcode_class('code128')
         code128 = CODE128(serial_number, writer=ImageWriter())
-        full_filename = code128.save(os.path.join(barcode_dir, filename))
+        
+        # 바코드 이미지에 시리얼 넘버를 포함시키기 위해 텍스트 추가
+        options = {
+            'write_text': True,
+            'text': serial_number
+        }
+        
+        full_filename = code128.save(os.path.join(barcode_dir, filename), options)
         logging.info(f"Barcode generated successfully: {full_filename}")
         return full_filename
     except Exception as e:
@@ -49,7 +56,9 @@ def generate_barcode(serial_number, customer_name, customer_number):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     barcode_image = None
-    barcode_list = os.listdir(os.path.join(app.root_path, 'static', 'Barcodes'))
+    barcode_dir = os.path.join(app.root_path, 'static', 'Barcodes')
+    barcode_list = [f for f in os.listdir(barcode_dir) if f.endswith(('.png', '.jpg', '.jpeg', '.gif'))]
+    
     if request.method == 'POST':
         serial_number = request.form.get('serial_number')
         encrypted_serial_number = encrypt_data(serial_number)
@@ -67,7 +76,8 @@ def index():
 
 @app.route('/barcodes', methods=['GET'])
 def barcodes():
-    barcode_list = os.listdir(os.path.join(app.root_path, 'static', 'Barcodes'))
+    barcode_dir = os.path.join(app.root_path, 'static', 'Barcodes')
+    barcode_list = [f for f in os.listdir(barcode_dir) if f.endswith(('.png', '.jpg', '.jpeg', '.gif'))]
     return jsonify(barcode_list)
 
 @app.route('/delete_image', methods=['POST'])
