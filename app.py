@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request, url_for, jsonify, send_from_directory
-from cryptography.fernet import Fernet
+import logging
+import os
+
 import barcode
 from barcode.writer import ImageWriter
-import os
-import logging
+from cryptography.fernet import Fernet
+from flask import (Flask, jsonify, render_template, request,
+                   send_from_directory, url_for)
 
 # 로그 설정
 logging.basicConfig(level=logging.INFO)
